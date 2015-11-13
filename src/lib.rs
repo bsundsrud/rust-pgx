@@ -44,7 +44,6 @@ macro_rules! pgx_row {
 		$type_name: ident,
 		$( $field: ident : $idx: expr),*
 	) => {
-		use postgres::rows::Row;
 		impl FromRow for $type_name {
 			fn from_row<'a>(row: Row<'a>) -> $type_name {
 		        $type_name {

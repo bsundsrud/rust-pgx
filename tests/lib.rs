@@ -3,6 +3,7 @@ extern crate postgres;
 extern crate pgx;
 
 use postgres::{Connection, SslMode};
+use postgres::rows::Row;
 use pgx::{FromRow, queryx};
 
 #[derive(Debug)]

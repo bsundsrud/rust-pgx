@@ -13,6 +13,7 @@ extern crate postgres;
 extern crate pgx;
 
 use postgres::{Connection, SslMode};
+use postgres::rows::Row;
 use pgx::{FromRow, queryx};
 
 #[derive(Debug)]
@@ -25,7 +26,7 @@ struct Person {
 pgx_row!{Person, id: 0, name: 1, data: 2}
 
 // The above generates the following:
-// use postgres::rows::Row;
+// 
 // impl FromRow for Person {
 //     fn from_row<'a>(row: Row<'a>) -> Person {
 //         Person {
