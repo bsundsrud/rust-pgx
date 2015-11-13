@@ -3,6 +3,8 @@
 Attempt to both learn Rust and also adapt something similar to the 
 great [sqlx](https://github.com/jmoiron/sqlx) library for Go, taking advantage of Rust's generics.
 
+Works on Rust Stable (1.4.0).
+
 ## Example
 
 This is adapted from sfackler's example for the [rust-postgres crate](https://github.com/sfackler/rust-postgres).
