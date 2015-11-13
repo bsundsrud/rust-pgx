@@ -3,5 +3,9 @@ name = "pgx"
 version = "0.1.0"
 authors = ["benn.sundsrud <benn.sundsrud@gmail.com>"]
 
+[lib]
+name = "pgx"
+path = "src/lib.rs"
+
 [dependencies]
-postgres = "0.9.1"
+postgres = "0.10"
