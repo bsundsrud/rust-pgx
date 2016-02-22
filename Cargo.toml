@@ -6,6 +6,16 @@ authors = ["benn.sundsrud <benn.sundsrud@gmail.com>"]
 [lib]
 name = "pgx"
 path = "src/lib.rs"
+test = false
+bench = false
+
+[[test]]
+name = "test"
+path = "tests/lib.rs"
+
+[[bench]]
+name = "bench"
+path = "benches/lib.rs"
 
 [dependencies]
 postgres = "0.11"

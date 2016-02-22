@@ -1,5 +1,6 @@
 #![feature(test)]
 extern crate test;
+use test::Bencher;
 
 extern crate postgres;
 #[macro_use]
@@ -55,16 +56,67 @@ fn drop_data(conn: &Connection, table_name: &str) {
 }
 
 
-#[test]
-fn run_test() {
+#[bench]
+fn run_bench_standard(b: &mut Bencher) {
     let conn = Connection::connect("postgres://postgres@localhost/pgx", SslMode::None).unwrap();
-    let table_name = "Person_run_test";
+    let table_name = "Person_run_bench_standard";
     insert_data(&conn, table_name);
 
     let stmt = conn.prepare(format!("SELECT id, name, data FROM {}", table_name).as_str()).unwrap();
-    let people = queryx::<Person>(&stmt, &[]).unwrap().collect::<Vec<Person>>();
-    assert_eq!(people[0].name, "Benn");
-    assert_eq!(people[1].name, "Steven");
+
+    b.iter(|| {
+        let mut v = vec![];
+        for row in &stmt.query(&[]).unwrap() {
+            let person = Person {
+                id: row.get(0),
+                name: row.get(1),
+                data: row.get(2),
+            };
+            v.push(person);
+        }
+        v
+    });
+    drop_data(&conn, table_name);
+}
+
+#[bench]
+fn run_bench_column_lookup(b: &mut Bencher) {
+    let conn = Connection::connect("postgres://postgres@localhost/pgx", SslMode::None).unwrap();
+    let table_name = "Person_run_bench_standard";
+    insert_data(&conn, table_name);
+
+    let stmt = conn.prepare(format!("SELECT id, name, data FROM {}", table_name).as_str()).unwrap();
+
+    b.iter(|| {
+        let mut v = vec![];
+        for row in &stmt.query(&[]).unwrap() {
+            let person = Person {
+                id: row.get("id"),
+                name: row.get("name"),
+                data: row.get("data"),
+            };
+            v.push(person);
+        }
+        v
+    });
+    drop_data(&conn, table_name);
+}
+
+#[bench]
+fn run_bench_pgx(b: &mut Bencher) {
+    let conn = Connection::connect("postgres://postgres@localhost/pgx", SslMode::None).unwrap();
+    let table_name = "Person_run_bench_pgx";
+    insert_data(&conn, table_name);
+
+    let stmt = conn.prepare(format!("SELECT id, name, data FROM {}", table_name).as_str()).unwrap();
+
+    b.iter(|| {
+        let mut v = vec![];
+        for person in queryx::<Person>(&stmt, &[]).unwrap() {
+            v.push(person);
+        }
+        v
+    });
 
     drop_data(&conn, table_name);
 }
