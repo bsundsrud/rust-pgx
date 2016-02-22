@@ -8,4 +8,4 @@ name = "pgx"
 path = "src/lib.rs"
 
 [dependencies]
-postgres = "0.10"
+postgres = "0.11"

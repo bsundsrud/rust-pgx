@@ -9,19 +9,19 @@ use std::marker::PhantomData;
 use std::iter::Iterator;
 
 pub trait FromRow {
-	fn from_row<'a>(row: Row<'a>) -> Self;
+    fn from_row<'a>(row: Row<'a>) -> Self;
 }
 
 pub struct RowIterator<'a, T> {
     _marker: PhantomData<T>,
-    iter: IntoIter<'a>
+    iter: IntoIter<'a>,
 }
 
 impl<'a, T> Iterator for RowIterator<'a, T>
 where T: FromRow {
     type Item = T;
     fn next(&mut self) -> Option<T> {
-		match self.iter.next() {
+        match self.iter.next() {
             Some(a) => Some(T::from_row(a)),
             _ => None,
         }
@@ -29,13 +29,14 @@ where T: FromRow {
 }
 
 pub fn queryx<'a, T>(stmt: &'a Statement, args: &[&ToSql]) -> Result<RowIterator<'a, T>, Error>
-		where T: FromRow {
-	let rows = try!(stmt.query(args));
-	let iter = rows.into_iter();
-	Ok(RowIterator {
-	    iter: iter,
-	    _marker: PhantomData
-	})
+    where T: FromRow
+{
+    let rows = try!(stmt.query(args));
+    let iter = rows.into_iter();
+    Ok(RowIterator {
+        iter: iter,
+        _marker: PhantomData,
+    })
 }
 
 #[macro_export]
